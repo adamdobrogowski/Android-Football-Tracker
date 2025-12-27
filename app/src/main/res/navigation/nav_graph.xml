@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/matchListFragment">
+
+    <fragment
+        android:id="@+id/matchListFragment"
+        android:name="pl.edu.pb.footballtracker.ui.MatchListFragment"
+        android:label="Mecze"
+        tools:layout="@layout/fragment_match_list">
+        <action
+            android:id="@+id/action_matchListFragment_to_matchDetailsFragment"
+            app:destination="@id/matchDetailsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/matchDetailsFragment"
+        android:name="pl.edu.pb.footballtracker.ui.MatchDetailsFragment"
+        android:label="Szczegóły meczu"
+        tools:layout="@layout/fragment_match_details" />
+</navigation>
