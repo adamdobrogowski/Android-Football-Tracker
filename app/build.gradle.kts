@@ -1,8 +1,17 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("kotlin-kapt")
 }
+
+val properties = Properties()
+val propertiesFile = rootProject.file("local.properties")
+if (propertiesFile.exists()) {
+    properties.load(propertiesFile.inputStream())
+}
+val apiKey = properties.getProperty("FOOTBALL_API_TOKEN") ?: ""
 
 android {
     namespace = "pl.edu.pb.footballtracker"
@@ -16,6 +25,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "FOOTBALL_API_TOKEN", "\"$apiKey\"")
     }
 
     buildTypes {
@@ -27,15 +38,19 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
     }
+
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 
@@ -46,6 +61,10 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
 
+    implementation("io.coil-kt:coil-svg:2.4.0")
+    implementation("io.coil-kt:coil:2.4.0")
+
+    // Navigation
     val navVersion = "2.7.7"
     implementation("androidx.navigation:navigation-fragment-ktx:$navVersion")
     implementation("androidx.navigation:navigation-ui-ktx:$navVersion")
