@@ -1,11 +1,6 @@
 package pl.edu.pb.footballtracker
 
-import coil.ImageLoader
-import coil.decode.SvgDecoder
-import coil.request.ImageRequest
-import pl.edu.pb.footballtracker.model.TeamDto
 import android.content.Intent
-import pl.edu.pb.footballtracker.ui.TeamDetailsActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -13,10 +8,15 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import coil.ImageLoader
+import coil.decode.SvgDecoder
+import coil.request.ImageRequest
 import kotlinx.coroutines.launch
 import pl.edu.pb.footballtracker.adapter.TeamAdapter
 import pl.edu.pb.footballtracker.databinding.ActivityMainBinding
-import pl.edu.pb.footballtracker.network.RetrofitClientSingleton
+import pl.edu.pb.footballtracker.di.RetrofitInstance
+import pl.edu.pb.footballtracker.model.NetworkTeam
+import pl.edu.pb.footballtracker.ui.TeamDetailsActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -60,8 +60,8 @@ class MainActivity : AppCompatActivity() {
             try {
                 val token = BuildConfig.FOOTBALL_API_TOKEN
 
-                val response = RetrofitClientSingleton.instance.getTeams("PL", token)
-                val teams = response.teams ?: emptyList<TeamDto>()
+                val response = RetrofitInstance.api.getTeams("PL", token)
+                val teams = response.teams ?: emptyList<NetworkTeam>()
 
                 teamAdapter.updateTeams(teams)
                 Log.d("API_TEST", "Sukces! Załadowano ${teams.size} drużyn.")

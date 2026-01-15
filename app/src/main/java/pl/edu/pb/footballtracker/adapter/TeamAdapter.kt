@@ -3,13 +3,13 @@ package pl.edu.pb.footballtracker.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import pl.edu.pb.footballtracker.loadSvg
 import pl.edu.pb.footballtracker.databinding.ItemTeamBinding
-import pl.edu.pb.footballtracker.model.TeamDto
+import pl.edu.pb.footballtracker.loadSvg
+import pl.edu.pb.footballtracker.model.NetworkTeam
 
 class TeamAdapter(
-    private var teams: List<TeamDto>,
-    private val onItemClick: (TeamDto) -> Unit
+    private var teams: List<NetworkTeam>,
+    private val onItemClick: (NetworkTeam) -> Unit
 ) : RecyclerView.Adapter<TeamAdapter.TeamViewHolder>() {
 
     class TeamViewHolder(val binding: ItemTeamBinding) : RecyclerView.ViewHolder(binding.root)
@@ -23,7 +23,9 @@ class TeamAdapter(
         val team = teams[position]
         holder.binding.tvTeamName.text = team.name
 
-        holder.binding.ivBadge.loadSvg(team.badgeUrl)
+        team.badgeUrl?.let { url ->
+            holder.binding.ivBadge.loadSvg(url)
+        }
 
         holder.itemView.setOnClickListener {
             onItemClick(team)
@@ -32,7 +34,7 @@ class TeamAdapter(
 
     override fun getItemCount(): Int = teams.size
 
-    fun updateTeams(newTeams: List<TeamDto>) {
+    fun updateTeams(newTeams: List<NetworkTeam>) {
         this.teams = newTeams
         notifyDataSetChanged()
     }
