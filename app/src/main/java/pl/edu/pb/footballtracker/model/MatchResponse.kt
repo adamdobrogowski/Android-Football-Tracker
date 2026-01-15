@@ -7,6 +7,7 @@ data class FootballDataMatchResponse(
 )
 
 data class MatchDto(
+    @SerializedName("id") val id: Int,
     @SerializedName("homeTeam") val homeTeam: TeamInfo,
     @SerializedName("awayTeam") val awayTeam: TeamInfo,
     @SerializedName("score") val score: ScoreInfo,
@@ -14,7 +15,9 @@ data class MatchDto(
 )
 
 data class TeamInfo(@SerializedName("shortName") val name: String)
+
 data class ScoreInfo(@SerializedName("fullTime") val fullTime: FullTimeScore)
+
 data class FullTimeScore(
     @SerializedName("home") val home: Int?,
     @SerializedName("away") val away: Int?
@@ -25,7 +28,7 @@ fun MatchDto.toMatch(): Match {
     val aScore = score.fullTime.away ?: 0
 
     return Match(
-        id = 0,
+        id = this.id,
         homeTeam = homeTeam.name,
         awayTeam = awayTeam.name,
         score = "$hScore : $aScore",
