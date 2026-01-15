@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Football Tracker</string>
+    <string name="league_header">Premier League - Season 2025/26</string>
+    <string name="match_details">Match details</string>
+    <string name="score_label">Final score:</string>
+    <string name="date_label">Date:</string>
+
+    <string name="btn_watch_highlights">Watch the highlights (YouTube)</string>
+    <string name="btn_take_ticket_photo">Take a photo of your ticket</string>
+    <string name="location_stadium">Stadium location:</string>
+    <string name="distance_to_stadium">Distance: %s km</string>
+
+    <string name="photo_saved">The photo has been saved!</string>
+    <string name="location_error">Unable to retrieve location. </string>
+</resources>
