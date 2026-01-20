@@ -4,12 +4,17 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import kotlinx.coroutines.launch
+import pl.edu.pb.footballtracker.BuildConfig
 import pl.edu.pb.footballtracker.databinding.ActivityTeamDetailsBinding
+import pl.edu.pb.footballtracker.di.RetrofitInstance
 import pl.edu.pb.footballtracker.loadSvg
 
 class TeamDetailsActivity : AppCompatActivity() {
@@ -24,6 +29,7 @@ class TeamDetailsActivity : AppCompatActivity() {
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
+        val teamId = intent.getIntExtra("TEAM_ID", -1)
         val teamName = intent.getStringExtra("TEAM_NAME") ?: "Drużyna"
         val teamBadge = intent.getStringExtra("TEAM_BADGE") ?: ""
 
@@ -33,9 +39,37 @@ class TeamDetailsActivity : AppCompatActivity() {
         supportActionBar?.title = teamName
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        // Obsługa kliknięcia przycisku GPS
+        if (teamId != -1) {
+            loadLastMatch(teamId)
+        }
+
         binding.btnCheckDistance.setOnClickListener {
             calculateDistanceForTeam(teamName)
+        }
+    }
+
+    private fun loadLastMatch(teamId: Int) {
+        lifecycleScope.launch {
+            try {
+                val token = BuildConfig.FOOTBALL_API_TOKEN
+                val response = RetrofitInstance.api.getTeamMatches(teamId, token)
+
+                val lastMatch = response.matches?.firstOrNull()
+
+                if (lastMatch != null) {
+                    binding.tvLastMatchTeams.text = "${lastMatch.homeTeam.name} vs ${lastMatch.awayTeam.name}"
+
+                    val homeScore = lastMatch.score.fullTime.home ?: 0
+                    val awayScore = lastMatch.score.fullTime.away ?: 0
+
+                    binding.tvLastMatchScore.text = "$homeScore : $awayScore"
+                } else {
+                    binding.tvLastMatchTeams.text = "Brak danych o meczach"
+                }
+            } catch (e: Exception) {
+                Log.e("API_MATCH_ERROR", "Błąd: ${e.message}")
+                binding.tvLastMatchTeams.text = "Błąd pobierania wyniku"
+            }
         }
     }
 
