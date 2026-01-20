@@ -1,34 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8.dp"
-    app:cardCornerRadius="8.dp"
-    app:cardElevation="4.dp">
+    android:orientation="horizontal"
+    android:padding="12dp"
+    android:gravity="center_vertical"
+    android:background="?attr/selectableItemBackground">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <ImageView
+        android:id="@+id/ivBadge"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="16dp"
+        android:contentDescription="Logo" />
+
+    <TextView
+        android:id="@+id/tvTeamName"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="12.dp"
-        android:gravity="center_vertical">
+        android:layout_weight="1"
+        android:textSize="18sp"
+        android:textColor="@android:color/black"
+        android:textStyle="bold" />
 
-        <ImageView
-            android:id="@+id/ivBadge"
-            android:layout_width="50.dp"
-            android:layout_height="50.dp"
-            android:contentDescription="Herb drużyny"
-            android:src="@mipmap/ic_launcher" />
-
-        <TextView
-            android:id="@+id/tvTeamName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16.dp"
-            android:text="Nazwa Drużyny"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-    </LinearLayout>
-</androidx.cardview.widget.CardView>
+    <ImageView
+        android:id="@+id/ivFavorite"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:padding="8dp"
+        android:src="@drawable/ic_favorite_border"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Ulubione"
+        app:tint="#FF0000" />
+</LinearLayout>

@@ -14,15 +14,18 @@ class TeamDetailsActivity : AppCompatActivity() {
         binding = ActivityTeamDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val teamName = intent.getStringExtra("TEAM_NAME") ?: "Nieznana drużyna"
-        val teamBadge = intent.getStringExtra("TEAM_BADGE")
+        val teamName = intent.getStringExtra("TEAM_NAME") ?: "Drużyna"
+        val teamBadge = intent.getStringExtra("TEAM_BADGE") ?: ""
 
         binding.tvDetailName.text = teamName
-
-        teamBadge?.let { url ->
-            binding.ivDetailBadge.loadSvg(url)
-        }
+        binding.ivDetailBadge.loadSvg(teamBadge)
 
         supportActionBar?.title = teamName
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressedDispatcher.onBackPressed()
+        return true
     }
 }

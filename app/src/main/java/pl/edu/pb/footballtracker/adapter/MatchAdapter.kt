@@ -6,12 +6,17 @@ import androidx.recyclerview.widget.RecyclerView
 import pl.edu.pb.footballtracker.databinding.ItemMatchBinding
 import pl.edu.pb.footballtracker.model.Match
 
+
 class MatchAdapter(private var matches: List<Match>) : RecyclerView.Adapter<MatchAdapter.MatchViewHolder>() {
 
     class MatchViewHolder(val binding: ItemMatchBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MatchViewHolder {
-        val binding = ItemMatchBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemMatchBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
         return MatchViewHolder(binding)
     }
 
@@ -20,6 +25,7 @@ class MatchAdapter(private var matches: List<Match>) : RecyclerView.Adapter<Matc
 
         holder.binding.apply {
             textTeams.text = "${match.homeTeam} vs ${match.awayTeam}"
+
             textScore.text = "Wynik: ${match.score} (${match.date})"
         }
     }

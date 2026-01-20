@@ -3,12 +3,15 @@ package pl.edu.pb.footballtracker.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import pl.edu.pb.footballtracker.R
 import pl.edu.pb.footballtracker.databinding.ItemTeamBinding
 import pl.edu.pb.footballtracker.loadSvg
 import pl.edu.pb.footballtracker.model.NetworkTeam
 
 class TeamAdapter(
     private var teams: List<NetworkTeam>,
+    private var favoriteIds: Set<Int> = emptySet(),
+    private val onFavoriteClick: (NetworkTeam) -> Unit,
     private val onItemClick: (NetworkTeam) -> Unit
 ) : RecyclerView.Adapter<TeamAdapter.TeamViewHolder>() {
 
@@ -21,18 +24,36 @@ class TeamAdapter(
 
     override fun onBindViewHolder(holder: TeamViewHolder, position: Int) {
         val team = teams[position]
-        holder.binding.tvTeamName.text = team.name
 
-        team.badgeUrl?.let { url ->
-            holder.binding.ivBadge.loadSvg(url)
-        }
+        holder.binding.apply {
+            tvTeamName.text = team.name
 
-        holder.itemView.setOnClickListener {
-            onItemClick(team)
+            team.badgeUrl?.let { url ->
+                ivBadge.loadSvg(url)
+            }
+
+            val isFavorite = favoriteIds.contains(team.id)
+
+            ivFavorite.setImageResource(
+                if (isFavorite) R.drawable.ic_favorite else R.drawable.ic_favorite_border
+            )
+
+            ivFavorite.setOnClickListener {
+                onFavoriteClick(team)
+            }
+
+            root.setOnClickListener {
+                onItemClick(team)
+            }
         }
     }
 
     override fun getItemCount(): Int = teams.size
+
+    fun updateFavorites(newFavoriteIds: Set<Int>) {
+        this.favoriteIds = newFavoriteIds
+        notifyDataSetChanged()
+    }
 
     fun updateTeams(newTeams: List<NetworkTeam>) {
         this.teams = newTeams

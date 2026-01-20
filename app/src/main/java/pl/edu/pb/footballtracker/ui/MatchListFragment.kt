@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import pl.edu.pb.footballtracker.R
+import pl.edu.pb.footballtracker.adapter.MatchAdapter
 import pl.edu.pb.footballtracker.databinding.FragmentMatchListBinding
 
 class MatchListFragment : Fragment(R.layout.fragment_match_list) {
