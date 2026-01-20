@@ -60,11 +60,11 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation("com.google.android.gms:play-services-location:21.0.1")
 
     implementation("io.coil-kt:coil-svg:2.4.0")
     implementation("io.coil-kt:coil:2.4.0")
 
-    // Navigation
     val navVersion = "2.7.7"
     implementation("androidx.navigation:navigation-fragment-ktx:$navVersion")
     implementation("androidx.navigation:navigation-ui-ktx:$navVersion")
