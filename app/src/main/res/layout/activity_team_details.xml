@@ -24,6 +24,15 @@
         android:textSize="28sp"
         android:textStyle="bold" />
 
+    <Button
+        android:id="@+id/btnCheckDistance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="8dp"
+        android:text="Sprawdź dystans do stadionu"
+        app:icon="@android:drawable/ic_menu_mylocation" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -40,5 +49,6 @@
         android:layout_weight="1"
         android:layout_marginTop="8dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
 
 </LinearLayout>
