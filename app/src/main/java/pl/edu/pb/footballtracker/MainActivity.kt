@@ -1,15 +1,24 @@
 package pl.edu.pb.footballtracker
 
+import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
+import android.view.Menu
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
+import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
@@ -17,6 +26,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import coil.ImageLoader
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import pl.edu.pb.footballtracker.adapter.TeamAdapter
@@ -34,21 +44,32 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var binding: ActivityMainBinding
     private lateinit var teamAdapter: TeamAdapter
     private lateinit var db: AppDatabase
-
     private lateinit var sensorManager: SensorManager
     private var lastShakeTime: Long = 0
+    private val CHANNEL_ID = "football_tracker_channel"
+
+    private val requestNotificationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (!isGranted) {
+            Snackbar.make(binding.root, "Powiadomienia są wyłączone.", Snackbar.LENGTH_LONG).show()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        db = AppDatabase.getDatabase(this)
+        setSupportActionBar(binding.toolbar)
 
+        db = AppDatabase.getDatabase(this)
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
 
+        createNotificationChannel()
         setupRecyclerView()
         observeFavorites()
+        checkNotificationPermission()
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -59,10 +80,33 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         loadTeams()
     }
 
+    private fun checkNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                requestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        val searchItem = menu.findItem(R.id.action_search)
+        val searchView = searchItem?.actionView as? SearchView
+
+        searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean = false
+            override fun onQueryTextChange(newText: String?): Boolean {
+                teamAdapter.filter(newText ?: "")
+                return true
+            }
+        })
+        return true
+    }
+
     override fun onResume() {
         super.onResume()
         sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)?.let {
-            sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_NORMAL)
+            sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_UI)
         }
     }
 
@@ -79,7 +123,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
             val acceleration = sqrt(x * x + y * y + z * z) - SensorManager.GRAVITY_EARTH
 
-            if (acceleration > 12.0) {
+            if (acceleration > 10.0) {
                 val currentTime = System.currentTimeMillis()
                 if (currentTime - lastShakeTime > 2000) {
                     lastShakeTime = currentTime
@@ -92,7 +136,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
 
     private fun openFavorites() {
-        Toast.makeText(this, "Wykryto potrząśnięcie! Otwieram ulubione.", Toast.LENGTH_SHORT).show()
+        Snackbar.make(binding.root, "Wykryto potrząśnięcie! Otwieram ulubione.", Snackbar.LENGTH_SHORT).show()
         val intent = Intent(this, FavoriteTeamsActivity::class.java)
         startActivity(intent)
     }
@@ -104,8 +148,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             onItemClick = { team ->
                 val intent = Intent(this, TeamDetailsActivity::class.java).apply {
                     putExtra("TEAM_ID", team.id)
-                    putExtra("TEAM_NAME", team.name)
-                    putExtra("TEAM_BADGE", team.badgeUrl)
+                    putExtra("TEAM_NAME", team.name ?: "Drużyna")
+                    putExtra("TEAM_BADGE", team.badgeUrl ?: "")
                 }
                 startActivity(intent)
             }
@@ -130,14 +174,53 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         lifecycleScope.launch {
             val dao = db.favoriteTeamDao()
             val isFav = dao.isFavorite(team.id)
-            val favoriteEntity = FavoriteTeam(team.id, team.name, team.badgeUrl)
+            val favoriteEntity = FavoriteTeam(
+                id = team.id,
+                name = team.name ?: "Nieznana drużyna",
+                badgeUrl = team.badgeUrl ?: ""
+            )
 
             if (isFav) {
                 dao.delete(favoriteEntity)
+                Snackbar.make(binding.root, getString(R.string.removed_from_favorites), Snackbar.LENGTH_SHORT).show()
             } else {
                 dao.insert(favoriteEntity)
+                showNotification(team.name ?: "Drużyna")
+                Snackbar.make(binding.root, getString(R.string.added_to_favorites), Snackbar.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "Football Tracker Channel"
+            val descriptionText = "Powiadomienia o ulubionych drużynach"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+                description = descriptionText
+            }
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    private fun showNotification(teamName: String) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+
+        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_favorite)
+            .setContentTitle("Football Tracker")
+            .setContentText("Dodano $teamName do ulubionych!")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
+        val notificationManager: NotificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(teamName.hashCode(), builder.build())
     }
 
     private fun loadTeams() {
@@ -148,9 +231,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 val teams = response.teams ?: emptyList<NetworkTeam>()
 
                 teamAdapter.updateTeams(teams)
-                Log.d("API_TEST", "Sukces! Załadowano ${teams.size} drużyn.")
+                Log.d("API_TEST", "Załadowano ${teams.size} drużyn.")
             } catch (e: Exception) {
                 Log.e("API_TEST", "Błąd: ${e.message}")
+                Snackbar.make(binding.root, "Błąd pobierania danych", Snackbar.LENGTH_LONG).show()
             }
         }
     }

@@ -10,11 +10,9 @@
     <string name="btn_remove_favorite">Usuń z ulubionych</string>
 
     <string name="btn_watch_highlights">Oglądaj skróty (YouTube)</string>
-    <string name="btn_take_ticket_photo">Zrób zdjęcie biletu</string>
     <string name="location_stadium">Lokalizacja stadionu:</string>
     <string name="distance_to_stadium">Odległość: %s km</string>
 
-    <string name="photo_saved">Zdjęcie zostało zapisane!</string>
     <string name="location_error">Nie można pobrać lokalizacji.</string>
     <string name="added_to_favorites">Dodano do ulubionych!</string>
     <string name="removed_from_favorites">Usunięto z ulubionych.</string>

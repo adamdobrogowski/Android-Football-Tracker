@@ -15,15 +15,25 @@ class MatchViewModel : ViewModel() {
     private val _matches = MutableLiveData<List<Match>>()
     val matches: LiveData<List<Match>> get() = _matches
 
-    private val _error = MutableLiveData<String>()
-    val error: LiveData<String> get() = _error
+    private val _error = MutableLiveData<String?>()
+    val error: LiveData<String?> get() = _error
+
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> get() = _isLoading
 
     init {
         loadLiveMatches()
     }
 
+    fun refreshMatches() {
+        loadLiveMatches()
+    }
+
     private fun loadLiveMatches() {
         viewModelScope.launch {
+            _isLoading.value = true
+            _error.value = null
+
             try {
                 val result = repository.getMatches()
 
@@ -34,6 +44,8 @@ class MatchViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 _error.postValue("Błąd sieci: ${e.message}")
+            } finally {
+                _isLoading.value = false
             }
         }
     }
