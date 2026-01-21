@@ -34,7 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Sprawdź dystans do stadionu"
+            android:text="@string/btn_check_distance"
             app:icon="@android:drawable/ic_menu_mylocation" />
 
         <Button
@@ -64,7 +64,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Ostatni wynik"
+                    android:text="@string/last_result_label"
                     android:textSize="12sp"
                     android:textColor="@android:color/darker_gray"
                     android:textStyle="bold"

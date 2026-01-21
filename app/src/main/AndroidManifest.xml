@@ -36,7 +36,7 @@
         <activity
             android:name=".ui.FavoriteTeamsActivity"
             android:exported="false"
-            android:label="Ulubione Drużyny"
+            android:label="@string/favorite_teams_title"
             android:parentActivityName=".MainActivity" />
 
     </application>

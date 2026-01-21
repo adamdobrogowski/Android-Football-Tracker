@@ -4,6 +4,9 @@
     <string name="match_details">Szczegóły meczu</string>
     <string name="score_label">Wynik:</string>
     <string name="date_label">Data:</string>
+    <string name="btn_check_distance">Sprawdź dystans do stadionu</string>
+    <string name="last_result_label">Ostatni wynik</string>
+    <string name="favorite_teams_title">Twoje ulubione drużyny</string>
 
     <string name="recent_matches_label">Ostatnie mecze:</string>
     <string name="btn_add_favorite">Dodaj do ulubionych</string>

@@ -4,17 +4,18 @@
     <string name="match_details">Match Details</string>
     <string name="score_label">Score:</string>
     <string name="date_label">Date:</string>
+    <string name="btn_check_distance">Check distance to stadium</string>
+    <string name="last_result_label">Last result</string>
+    <string name="favorite_teams_title">Your favorite teams</string>
 
     <string name="recent_matches_label">Recent matches:</string>
     <string name="btn_add_favorite">Add to favorites</string>
     <string name="btn_remove_favorite">Remove from favorites</string>
 
     <string name="btn_watch_highlights">Watch Highlights (YouTube)</string>
-    <string name="btn_take_ticket_photo">Take ticket photo</string>
     <string name="location_stadium">Stadium location:</string>
     <string name="distance_to_stadium">Distance: %s km</string>
 
-    <string name="photo_saved">Photo saved successfully!</string>
     <string name="location_error">Unable to get location.</string>
     <string name="added_to_favorites">Added to favorites!</string>
     <string name="removed_from_favorites">Removed from favorites.</string>

@@ -1,5 +1,6 @@
 package pl.edu.pb.footballtracker.adapter
 
+import pl.edu.pb.footballtracker.R
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -26,7 +27,8 @@ class MatchAdapter(private var matches: List<Match>) : RecyclerView.Adapter<Matc
         holder.binding.apply {
             textTeams.text = "${match.homeTeam} vs ${match.awayTeam}"
 
-            textScore.text = "Wynik: ${match.score} (${match.date})"
+            val scoreText = holder.itemView.context.getString(R.string.score_label)
+            textScore.text = "$scoreText ${match.score} (${match.date})"
         }
     }
 
