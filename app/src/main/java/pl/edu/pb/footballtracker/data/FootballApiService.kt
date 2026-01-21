@@ -26,6 +26,12 @@ interface FootballApiService {
         @Header("X-Auth-Token") token: String,
         @Query("status") status: String = "FINISHED",
         @Query("limit") limit: Int = 1
-    ): NetworkMatchResponse
+    ): FootballDataMatchResponse
+
+    @GET("v4/competitions/{code}/matches")
+    suspend fun getMatches(
+        @Path("code") code: String,
+        @Header("X-Auth-Token") token: String
+    ): FootballDataMatchResponse
 
 }

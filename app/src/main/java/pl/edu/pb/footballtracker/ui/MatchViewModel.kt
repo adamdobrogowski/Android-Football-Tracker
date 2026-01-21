@@ -38,12 +38,12 @@ class MatchViewModel : ViewModel() {
                 val result = repository.getMatches()
 
                 if (result.isNotEmpty()) {
-                    _matches.postValue(result)
+                    _matches.value = result
                 } else {
-                    _error.postValue("Brak meczów na dziś lub błąd klucza API.")
+                    _error.value = "Nie znaleziono rozegranych meczów w tej lidze."
                 }
             } catch (e: Exception) {
-                _error.postValue("Błąd sieci: ${e.message}")
+                _error.value = "Błąd połączenia: Sprawdź Internet."
             } finally {
                 _isLoading.value = false
             }

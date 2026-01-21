@@ -11,9 +11,15 @@ class FootballRepository {
 
     suspend fun getMatches(): List<Match> {
         return try {
-            val response = api.getMatches(BuildConfig.FOOTBALL_API_TOKEN)
+            val response = api.getMatches("CL", BuildConfig.FOOTBALL_API_TOKEN)
 
-            response.matches?.map { it.toMatch() } ?: emptyList()
+            response.matches?.let { allMatches ->
+                allMatches
+                    .filter { it.status == "FINISHED" }
+                    .takeLast(5)
+                    .reversed()
+                    .map { it.toMatch() }
+            } ?: emptyList()
         } catch (e: Exception) {
             e.printStackTrace()
             emptyList()

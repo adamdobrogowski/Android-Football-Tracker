@@ -8,7 +8,8 @@ data class NetworkMatchDetails(
     val homeTeam: MatchTeamDetails,
     val awayTeam: MatchTeamDetails,
     val score: MatchScoreDetails,
-    val utcDate: String
+    val utcDate: String,
+    val status: String?
 )
 
 data class MatchTeamDetails(

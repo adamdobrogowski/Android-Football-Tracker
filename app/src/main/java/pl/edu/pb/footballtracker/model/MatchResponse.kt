@@ -11,7 +11,8 @@ data class MatchDto(
     @SerializedName("homeTeam") val homeTeam: TeamInfo,
     @SerializedName("awayTeam") val awayTeam: TeamInfo,
     @SerializedName("score") val score: ScoreInfo,
-    @SerializedName("utcDate") val date: String
+    @SerializedName("utcDate") val date: String,
+    @SerializedName("status") val status: String?
 )
 
 data class TeamInfo(@SerializedName("shortName") val name: String)
